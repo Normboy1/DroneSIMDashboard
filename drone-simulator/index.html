@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone GPS Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Drone GPS Simulator</h1>
+        </header>
+        
+        <div id="location-prompt" class="modal">
+            <div class="modal-content">
+                <h2>Get Your Location</h2>
+                <p>Allow access to your current location to start the simulation, or enter coordinates manually.</p>
+                <div class="modal-buttons">
+                    <button id="get-location-btn">Use My Location</button>
+                    <button id="manual-location-btn">Enter Manually</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="drone-name-modal" class="modal">
+            <div class="modal-content">
+                <h2>Name Your Drone</h2>
+                <div class="name-input-container">
+                    <input type="text" id="drone-name-input" placeholder="Enter drone name">
+                    <div class="color-picker">
+                        <label>Select Color:</label>
+                        <div class="color-options">
+                            <span class="color-option" style="background-color: #FF5252;" data-color="#FF5252"></span>
+                            <span class="color-option" style="background-color: #536DFE;" data-color="#536DFE"></span>
+                            <span class="color-option" style="background-color: #64FFDA;" data-color="#64FFDA"></span>
+                            <span class="color-option" style="background-color: #FFD740;" data-color="#FFD740"></span>
+                            <span class="color-option" style="background-color: #69F0AE;" data-color="#69F0AE"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button id="save-drone-name-btn">Save</button>
+                    <button id="cancel-drone-name-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="home-location-modal" class="modal">
+            <div class="modal-content">
+                <h2>Set Home Location</h2>
+                <div class="home-location-container">
+                    <p>Set a new home location for <span id="home-drone-name">this drone</span>.</p>
+                    <div class="coordinates">
+                        <div class="coordinate-input">
+                            <label for="home-lat">Home Latitude:</label>
+                            <input type="number" id="home-lat" step="0.000001" value="37.7749">
+                        </div>
+                        <div class="coordinate-input">
+                            <label for="home-lng">Home Longitude:</label>
+                            <input type="number" id="home-lng" step="0.000001" value="-122.4194">
+                        </div>
+                    </div>
+                    <div class="home-options">
+                        <label><input type="checkbox" id="use-current-location"> Use current drone position</label>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button id="save-home-btn">Save Home</button>
+                    <button id="cancel-home-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="simulation-container">
+            <div class="map-container" id="map"></div>
+            <div class="controls">
+                <div class="drone-list-container">
+                    <h3>Drones</h3>
+                    <div id="drone-list"></div>
+                    <div class="drone-buttons">
+                        <button id="add-drone-btn">Add New Drone</button>
+                        <button id="rename-drone-btn">Rename Drone</button>
+                        <button id="start-all-btn">Start All</button>
+                        <button id="pause-all-btn">Pause All</button>
+                    </div>
+                </div>
+                
+                <div id="drone-details">
+                    <div class="coordinates">
+                        <div class="coordinate-input">
+                            <label for="current-lat">Current Latitude:</label>
+                            <input type="number" id="current-lat" step="0.000001" value="37.7749">
+                        </div>
+                        <div class="coordinate-input">
+                            <label for="current-lng">Current Longitude:</label>
+                            <input type="number" id="current-lng" step="0.000001" value="-122.4194">
+                        </div>
+                    </div>
+                    <div class="coordinates">
+                        <div class="coordinate-input">
+                            <label for="destination-lat">Destination Latitude:</label>
+                            <input type="number" id="destination-lat" step="0.000001" value="37.7833">
+                        </div>
+                        <div class="coordinate-input">
+                            <label for="destination-lng">Destination Longitude:</label>
+                            <input type="number" id="destination-lng" step="0.000001" value="-122.4167">
+                        </div>
+                    </div>
+                    <div class="drone-controls">
+                        <div class="primary-controls">
+                            <button id="reset-btn">Reset</button>
+                            <button id="return-home-btn">Return Home</button>
+                            <button id="set-home-btn">Set Home</button>
+                            <button id="set-current-as-home-btn">My Location → Home</button>
+                            <button id="toggle-follow-btn">Follow Me</button>
+                            <button id="toggle-map-follow-btn">Track Drone</button>
+                        </div>
+                        <div class="speed-control">
+                            <label for="speed">Drone Speed:</label>
+                            <input type="range" id="speed" min="1" max="10" value="5">
+                            <span id="speed-value">5</span>
+                        </div>
+                    </div>
+                    <div class="drone-info">
+                        <p>Status: <span id="drone-status">Idle</span></p>
+                        <p>Distance to destination: <span id="distance">0</span> km</p>
+                        <p>Distance to home: <span id="home-distance">0</span> km</p>
+                        <p>Current speed: <span id="current-speed">0</span> km/h</p>
+                        <p>Battery level: <span id="battery-level">100</span>%</p>
+                        <p>Estimated arrival: <span id="eta">--:--</span></p>
+                    </div>
+                    <div class="drone-stats">
+                        <h4>Lifetime Statistics</h4>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Total Distance</div>
+                                <div class="stat-value"><span id="total-distance">0.00</span> km</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Flight Time</div>
+                                <div class="stat-value"><span id="flight-time">00:00:00</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load the Leaflet.js library for maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script src="drone.js"></script>
+    <script src="simulation.js"></script>
+</body>
+</html>
